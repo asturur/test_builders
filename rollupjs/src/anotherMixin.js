@@ -3,6 +3,9 @@ const anotherMixin = {
         const [_b, _a] = [a, b];
         return _a ** _b;
     },
+    ...(process.env.WITH_SVG_EXPORT ? {
+        svgExport: () => 'svg_export'
+    } : {}),
 };
 
 export { anotherMixin };
