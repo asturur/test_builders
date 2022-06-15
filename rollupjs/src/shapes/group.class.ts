@@ -28,7 +28,7 @@ export class Group extends fabric.Collection {
      * @type string
      * @default
      */
-    type = 'group'
+    type: string = 'group'
 
     /**
      * Specifies the **layout strategy** for instance
@@ -37,13 +37,13 @@ export class Group extends fabric.Collection {
      * @type string
      * @default
      */
-    layout = 'fit-content'
+    layout: string = 'fit-content'
 
     /**
      * Width of stroke
      * @type Number
      */
-    strokeWidth = 0
+    strokeWidth: number = 0
 
     /**
      * List of properties to consider when checking if state
@@ -51,7 +51,7 @@ export class Group extends fabric.Collection {
      * as well as for history (undo/redo) purposes
      * @type string[]
      */
-    stateProperties = fabric.Object.prototype.stateProperties.concat('layout')
+    stateProperties: string[] = fabric.Object.prototype.stateProperties.concat('layout')
 
     /**
      * Used to optimize performance
@@ -59,7 +59,7 @@ export class Group extends fabric.Collection {
      * @default
      * @type boolean
      */
-    subTargetCheck = false
+    subTargetCheck: boolean = false
 
     /**
      * Used to allow targeting of object inside groups.
@@ -68,7 +68,7 @@ export class Group extends fabric.Collection {
      * @default
      * @type boolean
      */
-    interactive = false
+    interactive: boolean = false
 
     /**
      * Used internally to optimize performance
@@ -86,7 +86,7 @@ export class Group extends fabric.Collection {
      * @param {boolean} [objectsRelativeToGroup] true if objects exist in group coordinate plane
      * @return {fabric.Group} thisArg
      */
-    constructor(objects, options, objectsRelativeToGroup) {
+    constructor(objects: fabric.Object[], options: object, objectsRelativeToGroup: boolean): fabric.Group {
       this._objects = objects || [];
       this._activeObjects = [];
       this.__objectMonitor = this.__objectMonitor.bind(this);
@@ -109,7 +109,7 @@ export class Group extends fabric.Collection {
      * @param {string} key
      * @param {*} value
      */
-    _set(key, value) {
+    _set(key: string, value: any) {
       var prev = this[key];
       super._set(key, value);
       if (key === 'canvas' && prev !== value) {
@@ -151,7 +151,7 @@ export class Group extends fabric.Collection {
      * @param {fabric.Object} objects Object to insert
      * @param {Number} index Index to insert object at
      */
-    insertAt(objects, index) {
+    insertAt(objects: fabric.Object, index: number) {
       fabric.Collection.insertAt.call(this, objects, index, this._onObjectAdded);
       this._onAfterObjectsChange('added', Array.isArray(objects) ? objects : [objects]);
     }
@@ -161,7 +161,7 @@ export class Group extends fabric.Collection {
      * @param {...fabric.Object} objects
      * @returns {fabric.Object[]} removed objects
      */
-    remove() {
+    remove(): fabric.Object[] {
       var removed = fabric.Collection.remove.call(this, arguments, this._onObjectRemoved);
       this._onAfterObjectsChange('removed', removed);
       return removed;
@@ -171,7 +171,7 @@ export class Group extends fabric.Collection {
      * Remove all objects
      * @returns {fabric.Object[]} removed objects
      */
-    removeAll() {
+    removeAll(): fabric.Object[] {
       this._activeObjects = [];
       return this.remove.apply(this, this._objects.slice());
     }
@@ -211,7 +211,7 @@ export class Group extends fabric.Collection {
      * @param {boolean} watch
      * @param {fabric.Object} object
      */
-    _watchObject(watch, object) {
+    _watchObject(watch: boolean, object: fabric.Object) {
       var directive = watch ? 'on' : 'off';
       //  make sure we listen only once
       watch && this._watchObject(false, object);
@@ -227,7 +227,7 @@ export class Group extends fabric.Collection {
      * @param {fabric.Object} object
      * @returns
      */
-    canEnterGroup(object) {
+    canEnterGroup(object: fabric.Object) {
       if (object === this || this.isDescendantOf(object)) {
         /* _DEV_MODE_START_ */
         console.error('fabric.Group: trying to add group to itself, this call has no effect');
@@ -250,7 +250,7 @@ export class Group extends fabric.Collection {
      * @param {boolean} [removeParentTransform] true if object is in canvas coordinate plane
      * @returns {boolean} true if object entered group
      */
-    enterGroup(object, removeParentTransform) {
+    enterGroup(object: fabric.Object, removeParentTransform: boolean): boolean {
       if (object.group) {
         object.group.remove(object);
       }
@@ -263,7 +263,7 @@ export class Group extends fabric.Collection {
      * @param {fabric.Object} object
      * @param {boolean} [removeParentTransform] true if object is in canvas coordinate plane
      */
-    _enterGroup(object, removeParentTransform) {
+    _enterGroup(object: fabric.Object, removeParentTransform: boolean) {
       if (removeParentTransform) {
         // can this be converted to utils (sendObjectToPlane)?
         applyTransformToObject(
@@ -290,7 +290,7 @@ export class Group extends fabric.Collection {
      * @param {fabric.Object} object
      * @param {boolean} [removeParentTransform] true if object should exit group without applying group's transform to it
      */
-    exitGroup(object, removeParentTransform) {
+    exitGroup(object: fabric.Object, removeParentTransform: boolean) {
       this._exitGroup(object, removeParentTransform);
       object._set('canvas', undefined);
     }
@@ -300,7 +300,7 @@ export class Group extends fabric.Collection {
      * @param {fabric.Object} object
      * @param {boolean} [removeParentTransform] true if object should exit group without applying group's transform to it
      */
-    _exitGroup(object, removeParentTransform) {
+    _exitGroup(object: fabric.Object, removeParentTransform: boolean) {
       object._set('group', undefined);
       if (!removeParentTransform) {
         applyTransformToObject(
@@ -324,7 +324,7 @@ export class Group extends fabric.Collection {
      * @param {'added'|'removed'} type
      * @param {fabric.Object[]} targets
      */
-    _onAfterObjectsChange(type, targets) {
+    _onAfterObjectsChange(type: 'added' | 'removed', targets: fabric.Object[]) {
       this._applyLayoutStrategy({
         type: type,
         targets: targets
@@ -336,7 +336,7 @@ export class Group extends fabric.Collection {
      * @private
      * @param {fabric.Object} object
      */
-    _onObjectAdded(object) {
+    _onObjectAdded(object: fabric.Object) {
       this.enterGroup(object, true);
       object.fire('added', { target: this });
     }
@@ -345,7 +345,7 @@ export class Group extends fabric.Collection {
      * @private
      * @param {fabric.Object} object
      */
-    _onRelativeObjectAdded(object) {
+    _onRelativeObjectAdded(object: fabric.Object) {
       this.enterGroup(object, false);
       object.fire('added', { target: this });
     }
@@ -355,7 +355,7 @@ export class Group extends fabric.Collection {
      * @param {fabric.Object} object
      * @param {boolean} [removeParentTransform] true if object should exit group without applying group's transform to it
      */
-    _onObjectRemoved(object, removeParentTransform) {
+    _onObjectRemoved(object: fabric.Object, removeParentTransform: boolean) {
       this.exitGroup(object, removeParentTransform);
       object.fire('removed', { target: this });
     }
@@ -367,7 +367,7 @@ export class Group extends fabric.Collection {
      * Generally you do not cache objects in groups because the group is already cached.
      * @return {Boolean}
      */
-    shouldCache() {
+    shouldCache(): boolean {
       var ownCache = fabric.Object.prototype.shouldCache.call(this);
       if (ownCache) {
         for (var i = 0; i < this._objects.length; i++) {
@@ -384,7 +384,7 @@ export class Group extends fabric.Collection {
      * Check if this object or a child object will cast a shadow
      * @return {Boolean}
      */
-    willDrawShadow() {
+    willDrawShadow(): boolean {
       if (fabric.Object.prototype.willDrawShadow.call(this)) {
         return true;
       }
@@ -400,7 +400,7 @@ export class Group extends fabric.Collection {
      * Check if instance or its group are caching, recursively up
      * @return {Boolean}
      */
-    isOnACache() {
+    isOnACache(): boolean {
       return this.ownCaching || (!!this.group && this.group.isOnACache());
     }
 
@@ -408,7 +408,7 @@ export class Group extends fabric.Collection {
      * Execute the drawing operation for an object on a specified context
      * @param {CanvasRenderingContext2D} ctx Context to render on
      */
-    drawObject(ctx) {
+    drawObject(ctx: CanvasRenderingContext2D) {
       this._renderBackground(ctx);
       for (var i = 0; i < this._objects.length; i++) {
         this._objects[i].render(ctx);
@@ -443,7 +443,7 @@ export class Group extends fabric.Collection {
      * @override
      * @return {Boolean}
      */
-    setCoords() {
+    setCoords(): boolean {
       super.setCoords();
       this._shouldSetNestedCoords() && this.forEachObject(function (object) {
         object.setCoords();
@@ -454,7 +454,7 @@ export class Group extends fabric.Collection {
      * Renders instance on a given context
      * @param {CanvasRenderingContext2D} ctx context to render instance on
      */
-    render(ctx) {
+    render(ctx: CanvasRenderingContext2D) {
       //  used to inform objects not to double opacity
       this._transformDone = true;
       super.render(ctx);
@@ -465,7 +465,7 @@ export class Group extends fabric.Collection {
      * @public
      * @param {Partial<LayoutResult> & { layout?: string }} [context] pass values to use for layout calculations
      */
-    triggerLayout(context) {
+    triggerLayout(context: Partial<LayoutResult> & { layout?: string; }) {
       if (context && context.layout) {
         context.prevLayout = this.layout;
         this.layout = context.layout;
@@ -478,7 +478,7 @@ export class Group extends fabric.Collection {
      * @param {fabric.Object} object
      * @param {fabric.Point} diff
      */
-    _adjustObjectPosition(object, diff) {
+    _adjustObjectPosition(object: fabric.Object, diff: fabric.Point) {
       object.set({
         left: object.left + diff.x,
         top: object.top + diff.y,
@@ -493,7 +493,7 @@ export class Group extends fabric.Collection {
      * @private
      * @param {LayoutContext} context
      */
-    _applyLayoutStrategy(context) {
+    _applyLayoutStrategy(context: LayoutContext) {
       var isFirstLayout = context.type === 'initialization';
       if (!isFirstLayout && !this._firstLayoutDone) {
         //  reject layout requests before initialization layout
@@ -580,7 +580,7 @@ export class Group extends fabric.Collection {
      * @param {LayoutContext} context
      * @returns {LayoutResult | undefined}
      */
-    getLayoutStrategyResult(layoutDirective, objects, context) {  // eslint-disable-line no-unused-vars
+    getLayoutStrategyResult(layoutDirective: string, objects: fabric.Object[], context: LayoutContext): LayoutResult | undefined {  // eslint-disable-line no-unused-vars
       //  `fit-content-lazy` performance enhancement
       //  skip if instance had no objects before the `added` event because it may have kept layout after removing all previous objects
       if (layoutDirective === 'fit-content-lazy'
@@ -657,7 +657,7 @@ export class Group extends fabric.Collection {
      * @param {LayoutContext} context
      * @returns {LayoutResult | undefined}
      */
-    prepareBoundingBox(layoutDirective, objects, context) {
+    prepareBoundingBox(layoutDirective: string, objects: fabric.Object[], context: LayoutContext): LayoutResult | undefined {
       if (context.type === 'initialization') {
         return this.prepareInitialBoundingBox(layoutDirective, objects, context);
       }
@@ -680,7 +680,7 @@ export class Group extends fabric.Collection {
      * @param {LayoutContext} context
      * @returns {LayoutResult | undefined}
      */
-    prepareInitialBoundingBox(layoutDirective, objects, context) {
+    prepareInitialBoundingBox(layoutDirective: string, objects: fabric.Object[], context: LayoutContext): LayoutResult | undefined {
       var options = context.options || {},
           hasX = typeof options.left === 'number',
           hasY = typeof options.top === 'number',
@@ -771,7 +771,7 @@ export class Group extends fabric.Collection {
      * @param {fabric.Object[]} objects
      * @returns {LayoutResult | null} bounding box
      */
-    getObjectsBoundingBox(objects, ignoreOffset) {
+    getObjectsBoundingBox(objects: fabric.Object[], ignoreOffset): LayoutResult | null {
       if (objects.length === 0) {
         return null;
       }
@@ -834,7 +834,7 @@ export class Group extends fabric.Collection {
      * @param {string[]} [propertiesToInclude] Any properties that you might want to additionally include in the output
      * @returns {fabric.Object[]} serialized objects
      */
-    __serializeObjects(method, propertiesToInclude) {
+    __serializeObjects(method: 'toObject' | 'toDatalessObject', propertiesToInclude: string[]): fabric.Object[] {
       var _includeDefaultValues = this.includeDefaultValues;
       return this._objects
         .filter(function (obj) {
@@ -855,7 +855,7 @@ export class Group extends fabric.Collection {
      * @param {string[]} [propertiesToInclude] Any properties that you might want to additionally include in the output
      * @return {Object} object representation of an instance
      */
-    toObject(propertiesToInclude) {
+    toObject(propertiesToInclude: string[]): object {
       var obj = super.toObject(['layout', 'subTargetCheck', 'interactive'].concat(propertiesToInclude));
       obj.objects = this.__serializeObjects('toObject', propertiesToInclude);
       return obj;
@@ -894,7 +894,7 @@ export class Group extends fabric.Collection {
      * @param {Function} [reviver] Method for further parsing of svg representation.
      * @return {String} svg representation of an instance
      */
-    _toSVG(reviver) {
+    _toSVG(reviver: Function): string {
       var svgString = ['<g ', 'COMMON_PARTS', ' >\n'];
       var bg = this._createSVGBgRect(reviver);
       bg && svgString.push('\t\t', bg);
@@ -909,7 +909,7 @@ export class Group extends fabric.Collection {
      * Returns styles-string for svg-export, specific version for group
      * @return {String}
      */
-    getSvgStyles() {
+    getSvgStyles(): string {
       var opacity = typeof this.opacity !== 'undefined' && this.opacity !== 1 ?
             'opacity: ' + this.opacity + ';' : '',
           visibility = this.visible ? '' : ' visibility: hidden;';
@@ -925,7 +925,7 @@ export class Group extends fabric.Collection {
      * @param {Function} [reviver] Method for further parsing of svg representation.
      * @return {String} svg representation of an instance
      */
-    toClipPathSVG(reviver) {
+    toClipPathSVG(reviver: Function): string {
       var svgString = [];
       var bg = this._createSVGBgRect(reviver);
       bg && svgString.push('\t', bg);
@@ -945,7 +945,7 @@ export class Group extends fabric.Collection {
    * @param {Object} object Object to create a group from
    * @returns {Promise<fabric.Group>}
    */
-  fabric.Group.fromObject = function(object) {
+  fabric.Group.fromObject = function(object: object): Promise<fabric.Group> {
     var objects = object.objects || [],
         options = clone(object, true);
     delete options.objects;
