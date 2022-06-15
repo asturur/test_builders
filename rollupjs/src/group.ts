@@ -3,6 +3,8 @@
 
   'use strict';
 
+import { FabricObject } from "./object";
+
   var fabric = global.fabric || (global.fabric = {}),
       multiplyTransformMatrices = fabric.util.multiplyTransformMatrices,
       invertTransform = fabric.util.invertTransform,
@@ -21,7 +23,7 @@
    * @fires layout once layout completes
    * @see {@link fabric.Group#initialize} for constructor definition
    */
-export class Group extends fabric.Collection {
+export class Group extends FabricObject {
 
     /**
      * Type of an object
